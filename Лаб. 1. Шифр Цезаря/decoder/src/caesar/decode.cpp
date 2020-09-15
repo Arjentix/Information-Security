@@ -26,8 +26,8 @@ std::wostream& operator<<(std::wostream& os, const russian::Utf8Char& ch) {
 
 template <typename T, typename U, typename C>
 std::wostream& operator<<(std::wostream& os, const std::map<T, U, C>& m) {
-    bool first = true;
     os << "{";
+    bool first = true;
     for (const auto& [key, value] : m) {
         if (!first) {
             os << ", ";
@@ -40,6 +40,13 @@ std::wostream& operator<<(std::wostream& os, const std::map<T, U, C>& m) {
     return os;
 }
 
+/**
+ * @brief   Gets table with frequency for every letter
+ * 
+ * @param   intput  input stream
+ * 
+ * @return  map with russian letter as key and percentage as value
+ */
 FrequencyTable GetFrequencyTable(std::wistream& input) {
     FrequencyTable table;
     int total_chars = 0;
@@ -65,6 +72,14 @@ FrequencyTable GetFrequencyTable(std::wistream& input) {
     return table;
 }
 
+/**
+ * @brief   Compares to tables and mathes encoded letter to the original
+ * 
+ * @param   encoded_table   table with encoded letters frequencies
+ * @param   original_table  table with original letters frequencies
+ * 
+ * @return  map with encoded letter as key and decoded letter as value
+ */
 LettersTable CorrelateFrequencies(const FrequencyTable& encoded_table,
                                   const FrequencyTable& original_table) {
     LettersTable encoded_to_original;
