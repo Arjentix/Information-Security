@@ -37,7 +37,7 @@ Utf8Char ToCapital(const Utf8Char& ch);
 
 
 /**
- * @brief   Checks if UTF-8 char represents russian lower letter;
+ * @brief   Checks if UTF-8 char represents russian lower letter
  * 
  * @param   ch   UTF-8 char (pair of wide chars)
  * 
