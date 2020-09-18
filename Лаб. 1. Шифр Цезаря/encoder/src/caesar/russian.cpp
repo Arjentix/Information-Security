@@ -54,7 +54,7 @@ bool IsBetweenAandPe(const russian::Utf8Char& ch) {
  * 
  * @return  true if it's belongs to range and false otherwise
  */
-bool IsBetweenERandYA(const russian::Utf8Char& ch) {
+bool IsBetweenErAndYa(const russian::Utf8Char& ch) {
     return ch.first == kLowerErToYaPrefix &&
            ValueInRange(static_cast<int>(ch.second), kLowerErCode, kLowerYaCode);
 }
@@ -83,7 +83,7 @@ Utf8Char NextCapital(Utf8Char capital_letter, int offset) {
 }
 
 bool IsLowerLetter(const Utf8Char& ch) {
-    return IsBetweenAandPe(ch) || IsBetweenERandYA(ch);
+    return IsBetweenAandPe(ch) || IsBetweenErAndYa(ch);
 }
 
 Utf8Char NextLower(Utf8Char lower_letter, int offset) {
@@ -95,7 +95,7 @@ Utf8Char NextLower(Utf8Char lower_letter, int offset) {
             lower_letter.first = kLowerErToYaPrefix;
             offset -= (kLowerPeCode - lower_letter.second) + 1;
             lower_letter.second = kLowerErCode;
-        } else if (IsBetweenERandYA(lower_letter)) {
+        } else if (IsBetweenErAndYa(lower_letter)) {
             lower_letter.first = kLowerAtoPePrefix;
             offset -= (kLowerYaCode - lower_letter.second) + 1;
             lower_letter.second = kLowerACode;
