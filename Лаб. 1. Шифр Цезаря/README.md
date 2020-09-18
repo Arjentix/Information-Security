@@ -14,7 +14,7 @@
 ## Сборка
 
 ```bash
-cmake -Bbubuild .
+cmake -Bbuild .
 cmake --build build
 ```
 
