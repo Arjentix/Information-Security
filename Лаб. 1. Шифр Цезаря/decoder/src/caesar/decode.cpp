@@ -10,6 +10,7 @@
 #include <cmath>
 #include <map>
 #include <set>
+#include <algorithm>
 #include <sstream>
 
 #include "russian.h"
@@ -84,6 +85,7 @@ LettersTable CorrelateFrequencies(const FrequencyTable& encoded_table,
                                   const FrequencyTable& original_table) {
     LettersTable encoded_to_original;
     std::set<russian::Utf8Char, russian::Utf8CharCompare> used_original_letters;
+    std::map<int, int> key_to_frequency;
 
     for (const auto& [encoded_ch, encoded_freq] : encoded_table) {
         double min_delta = 100.0;
@@ -98,8 +100,24 @@ LettersTable CorrelateFrequencies(const FrequencyTable& encoded_table,
             }
         }
 
-        encoded_to_original[encoded_ch] = matched_ch;
+        const int diff = russian::Diff(encoded_ch, matched_ch);
+        const int sign = diff > 0 ? 1 : -1;
+        std::wcout << L"Diff between " << encoded_ch << L" and " << matched_ch << " = " << diff << std::endl;
+        ++key_to_frequency[diff];
+        ++key_to_frequency[sign*(std::abs(diff) - 32)];
         used_original_letters.insert(matched_ch);
+    }
+
+    auto it = std::max_element(key_to_frequency.begin(), key_to_frequency.end(),
+        [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
+            return lhs.second < rhs.second;
+        }
+    );
+    const int key = it->first;
+    std::wcout << L"Key = " << key << std::endl;
+
+    for (const auto& [encoded_ch, encoded_freq] : encoded_table) {
+        encoded_to_original[encoded_ch] = russian::PrevLower(encoded_ch, -key);
     }
 
     return encoded_to_original;

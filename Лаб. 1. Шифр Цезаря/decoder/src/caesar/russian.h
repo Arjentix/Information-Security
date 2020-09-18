@@ -46,6 +46,16 @@ Utf8Char ToCapital(const Utf8Char& ch);
 bool IsLowerLetter(const Utf8Char& ch);
 
 /**
+ * @brief   Gets previous russian lower letter
+ * 
+ * @param   lower_letter    lower letter to begin
+ * @param   offset          number of steps
+ * 
+ * @return  lower letter in offset steps back
+ */
+Utf8Char PrevLower(Utf8Char lower_letter, int offset);
+
+/**
  * @brief   Coverts capital russian letter to lower 
  * 
  * @param   ch  capital letter
@@ -53,5 +63,16 @@ bool IsLowerLetter(const Utf8Char& ch);
  * @return  the same letter, but in lower register
  */
 Utf8Char ToLower(const Utf8Char& ch);
+
+
+/**
+ * @brief   Finds number of steps from first letter to second
+ * 
+ * @param   first   letter to begin steps
+ * @param   second  letter to end steps
+ * 
+ * @return  number of steps from first to second
+ */
+int Diff(const Utf8Char& first, const Utf8Char& second);
 
 } // namespace russian

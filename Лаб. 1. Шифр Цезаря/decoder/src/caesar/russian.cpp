@@ -7,6 +7,8 @@
 
 #include "russian.h"
 
+#include <stdexcept>
+
 namespace {
 
 const int kCapitalPrefix = 208; // Prefix of russian capital letters
@@ -54,7 +56,7 @@ bool IsBetweenAandPe(const russian::Utf8Char& ch) {
  * 
  * @return  true if it's belongs to range and false otherwise
  */
-bool IsBetweenERandYA(const russian::Utf8Char& ch) {
+bool IsBetweenErAndYa(const russian::Utf8Char& ch) {
     return ch.first == kLowerErToYaPrefix &&
            ValueInRange(static_cast<int>(ch.second), kLowerErCode, kLowerYaCode);
 }
@@ -91,7 +93,28 @@ Utf8Char ToCapital(const Utf8Char& ch) {
 
 
 bool IsLowerLetter(const Utf8Char& ch) {
-    return IsBetweenAandPe(ch) || IsBetweenERandYA(ch);
+    return IsBetweenAandPe(ch) || IsBetweenErAndYa(ch);
+}
+
+Utf8Char PrevLower(Utf8Char lower_letter, int offset) {
+    offset %= 33;
+
+    while (IsLowerLetter(lower_letter) &&
+           !IsLowerLetter({lower_letter.first, lower_letter.second - offset})) {
+        if (IsBetweenAandPe(lower_letter)) {
+            lower_letter.first = kLowerErToYaPrefix;
+            offset -= (lower_letter.second - kLowerACode) + 1;
+            lower_letter.second = kLowerYaCode;
+        } else if (IsBetweenErAndYa(lower_letter)) {
+            lower_letter.first = kLowerAtoPePrefix;
+            offset -= (lower_letter.second - kLowerErCode) + 1;
+            lower_letter.second = kLowerPeCode;
+        }
+    }
+
+    lower_letter.second -= offset;
+
+    return lower_letter;
 }
 
 Utf8Char ToLower(const Utf8Char& ch) {
@@ -105,6 +128,28 @@ Utf8Char ToLower(const Utf8Char& ch) {
     }
 
     return {kLowerErToYaPrefix, ch.second - 32};
+}
+
+
+int Diff(const Utf8Char& first, const Utf8Char& second) {
+    if (IsCapitalLetter(first) && IsCapitalLetter(second)) {
+        return second.second - first.second;
+    }
+    if (IsLowerLetter(first) && IsLowerLetter(second)) {
+        if ((IsBetweenAandPe(first) && IsBetweenAandPe(second)) ||
+            (IsBetweenErAndYa(first) && IsBetweenErAndYa(second))) {
+            return second.second - first.second;
+        }
+
+        if (IsBetweenAandPe(first) && IsBetweenErAndYa(second)) {
+            return  (kLowerPeCode - first.second) + (second.second - kLowerErCode) + 1;
+        }
+        if (IsBetweenErAndYa(first) && IsBetweenAandPe(second)) {
+            return (kLowerYaCode - first.second) + (second.second - kLowerACode) + 1;
+        }
+    }
+
+    throw std::invalid_argument("Arguments should be in the same case");
 }
 
 } // namespace russian
