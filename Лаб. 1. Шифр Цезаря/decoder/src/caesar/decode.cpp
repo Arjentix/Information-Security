@@ -74,6 +74,32 @@ FrequencyTable GetFrequencyTable(std::wistream& input) {
 }
 
 /**
+ * @brief   Mathces encoded letter with original using frequency analysis
+ * 
+ * @param   encoded_letter  letter, encoded with caesar cipher
+ * @param   encoded_freq    frequency of appearing encoded_letter in encoded_text
+ * @param   original_table  table of frequencies of letters in not encrypted text
+ * 
+ * @return  matched letter from original_table
+ */
+russian::Utf8Char MatchLetter(const russian::Utf8Char& encoded_letter,
+                              double encoded_freq,
+                              const FrequencyTable& original_table) {
+    double min_delta = 100.0;
+    russian::Utf8Char match = encoded_letter;
+
+    for (const auto& [original_letter, original_freq] : original_table) {
+        const double delta = abs(encoded_freq - original_freq);
+        if (delta < min_delta) {
+            min_delta = delta;
+            match = original_letter;
+        }
+    }
+
+    return match;
+}
+
+/**
  * @brief   Compares to tables and mathes encoded letter to the original
  * 
  * @param   encoded_table   table with encoded letters frequencies
@@ -82,30 +108,19 @@ FrequencyTable GetFrequencyTable(std::wistream& input) {
  * @return  map with encoded letter as key and decoded letter as value
  */
 LettersTable CorrelateFrequencies(const FrequencyTable& encoded_table,
-                                  const FrequencyTable& original_table) {
+                                  FrequencyTable original_table) {
     LettersTable encoded_to_original;
-    std::set<russian::Utf8Char, russian::Utf8CharCompare> used_original_letters;
     std::map<int, int> key_to_frequency;
 
     for (const auto& [encoded_ch, encoded_freq] : encoded_table) {
-        double min_delta = 100.0;
-        russian::Utf8Char matched_ch = encoded_ch;
-        for (const auto& [original_ch, original_freq] : original_table) {
-            if (used_original_letters.count(original_ch) == 0) {
-                const double delta = abs(encoded_freq - original_freq);
-                if (delta < min_delta) {
-                    min_delta = delta;
-                    matched_ch = original_ch;
-                }
-            }
-        }
+        russian::Utf8Char matched_ch = MatchLetter(encoded_ch, encoded_freq, original_table);
+        original_table.erase(matched_ch);
 
         const int diff = russian::Diff(encoded_ch, matched_ch);
         const int sign = diff > 0 ? 1 : -1;
         std::wcout << L"Diff between " << encoded_ch << L" and " << matched_ch << " = " << diff << std::endl;
         ++key_to_frequency[diff];
         ++key_to_frequency[sign*(std::abs(diff) - 32)];
-        used_original_letters.insert(matched_ch);
     }
 
     auto it = std::max_element(key_to_frequency.begin(), key_to_frequency.end(),
@@ -135,7 +150,7 @@ void Decode(std::wistream& stats_input, std::wistream& input,
     FrequencyTable original = GetFrequencyTable(stats_input);
     std::wcout << "Original frequencies: " << original << std::endl;
     FrequencyTable encoded  = GetFrequencyTable(input_copy);
-    std::wcout << "\nEncoded frequencies: " << encoded << std::endl;
+    std::wcout << "\nEncoded frequencies: " << encoded << "\n" << std::endl;
     LettersTable encoded_to_original = CorrelateFrequencies(encoded, original);
     std::wcout << "\nEncoded to original: " << encoded_to_original << "\n" << std::endl;
 
