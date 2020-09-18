@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     default_random_engine generator(r());
     uniform_int_distribution<int> distribution(1, 32);
     int offset = distribution(generator); // Getting random offset
-    cout << "Key = " << offset << endl;
+    cout << "🔐 Key = " << offset << endl;
 
     if (argc == 1) {
         caesar::Encode(offset);

@@ -129,7 +129,7 @@ LettersTable CorrelateFrequencies(const FrequencyTable& encoded_table,
         }
     );
     const int key = it->first;
-    std::wcout << L"Key = " << key << std::endl;
+    std::cout << "🔑 Key = " << key << std::endl;
 
     for (const auto& [encoded_ch, encoded_freq] : encoded_table) {
         encoded_to_original[encoded_ch] = russian::PrevLower(encoded_ch, -key);
