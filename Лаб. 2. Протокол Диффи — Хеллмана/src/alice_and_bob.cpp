@@ -36,9 +36,9 @@ default_random_engine generator(r());
  * @return  pair of p and g numbers
  */
 pair<int, int> GetRandomPAndG() {
-    uniform_int_distribution<int> distribution(0, pg.size() - 1);
+    uniform_int_distribution<int> distribution(0, kPg.size() - 1);
 
-    return pg[distribution(generator)];
+    return kPg[distribution(generator)];
 }
 
 /**

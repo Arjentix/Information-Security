@@ -11,7 +11,15 @@
 #include <vector>
 #include <utility>
 
-std::vector<std::pair<int, int>> pg = {
+/**
+ * @brief   Possible values for p and g
+ * 
+ * @details p and g numbers in Diffie-Hellman protocol must meet the
+ *          rules. So p must be a prime number and g must be a primitive root of
+ *          p. Runtime generation is quite long and difficult, so some of them
+ *          are stored in this constant
+ */
+const std::vector<std::pair<int, int>> kPg = {
     {2, 1},
     {3, 2},
     {5, 2},
