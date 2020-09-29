@@ -44,8 +44,8 @@ class Socket {
 
  private:
   /**
-     * @param   descriptor  socket descriptor
-     */
+   * @param   descriptor  socket descriptor
+   */
   explicit Socket(int descriptor);
 
   friend std::pair<Socket, Socket> CreateSocketPair();
