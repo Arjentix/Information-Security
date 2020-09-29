@@ -3,3 +3,4 @@
 *.vscode*
 *.encrypted
 *.decrypted
+*.DS_Store
