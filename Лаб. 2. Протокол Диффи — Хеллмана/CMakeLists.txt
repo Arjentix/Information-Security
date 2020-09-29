@@ -6,6 +6,7 @@ set(THIS alice_and_bob)
 set(SOURCE
     src/main.cpp
     src/sock.cpp
+    src/caesar.cpp
     src/alice_and_bob.cpp
 )
 

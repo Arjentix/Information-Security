@@ -18,6 +18,7 @@
 #include <cctype>
 
 #include "pg.h"
+#include "caesar.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ random_device r;
 default_random_engine generator(r());
 
 /**
- * @brief   Gets random p in g according to Diffie-Hellman rules
+ * @brief   Get random p in g according to Diffie-Hellman rules
  * 
  * @return  pair of p and g numbers
  */
@@ -42,7 +43,7 @@ pair<int, int> GetRandomPAndG() {
 }
 
 /**
- * @brief   Generates random secret key in range [0, kMaxSecretKey]
+ * @brief   Generate random secret key in range [0, kMaxSecretKey]
  * 
  * @return  integer secret key
  */
@@ -53,6 +54,15 @@ int GenerateSecretKey() {
     return natural_distribution(generator);
 }
 
+/**
+ * @brief   Compute base^exp % modulus expression
+ * 
+ * @param   base    number to be powered
+ * @param   exp     power degree
+ * @param   modulus modulus
+ * 
+ * @return  the result of base^exp % modulus
+ */
 template <typename T>
 T ModPow(T base, T exp, T modulus) {
     base %= modulus;
@@ -81,6 +91,11 @@ void SendAndLog(sock::Socket& socket, string_view mes, ostream& os) {
     this_thread::sleep_for(chrono::milliseconds(20));
 }
 
+/**
+ * @brief   Check if companion has send OK message otherwise throws a runtime_error 
+ * 
+ * @param   socket  socket to read message
+ */
 void AssertOk(sock::Socket& socket) {
     while (socket.Good()) {
         const string ok = socket.Read();
@@ -90,55 +105,6 @@ void AssertOk(sock::Socket& socket) {
     }
 
     throw runtime_error("Can't receive OK message");
-}
-
-string Encode(string str, const int key) {
-    for (size_t i = 0; i < str.length(); ++i) {
-        if (!isalpha(str[i])) {
-            continue;
-        }
-
-        int k = key % 26;
-
-        if (isupper(str[i])) {
-            str[i] += k;
-            if (str[i] > 'Z') {
-                str[i] = 'A' + (str[i] - 'Z') - 1;
-            }
-        } else {
-            if ((str[i] + k > 'z') || (str[i] + k < 'a')) {
-                k -= 'z' - str[i];
-                str[i] = 'a' + k - 1;
-            } else {
-                str[i] += k;
-            }
-        }
-    }
-
-    return str;
-}
-
-string Decode(string str, const int key) {
-    for (size_t i = 0; i < str.length(); ++i) {
-        if (!isalpha(str[i])) {
-            continue;
-        }
-
-        char enc = str[i] - key % 26;
-        if (isupper(str[i])) {
-            if (enc < 'A') {
-                enc = 'Z' - (('A' - enc) - 1);
-            }
-        } else {
-            if (enc < 'a') {
-                enc = 'z' - (('a' - enc) - 1);
-            }
-        }
-
-        str[i] = enc;
-    }
-
-    return str;
 }
 
 }  // namespace
@@ -180,7 +146,7 @@ void RunAlice(sock::Socket& socket) {
             socket.Send(str);
             break;
         }
-        socket.Send(Encode(str, K));
+        socket.Send(caesar::Encode(str, K));
 
         this_thread::sleep_for(chrono::milliseconds(10));
 
@@ -189,7 +155,7 @@ void RunAlice(sock::Socket& socket) {
             break;
         }
         cout << greeting << "[Received: \"" << str
-             << "\", decoded: " << Decode(str, K) << "]" << endl;
+             << "\", decoded: " << caesar::Decode(str, K) << "]" << endl;
     }
 }
 
@@ -226,7 +192,7 @@ void RunBob(sock::Socket& socket) {
             break;
         }
         cout << greeting << "[Received: \"" << str
-             << "\", decoded: " << Decode(str, K) << "]" << endl;
+             << "\", decoded: " << caesar::Decode(str, K) << "]" << endl;
 
         cout << greeting;
         getline(cin, str);
@@ -234,7 +200,7 @@ void RunBob(sock::Socket& socket) {
             socket.Send(str);
             break;
         }
-        socket.Send(Encode(str, K));
+        socket.Send(caesar::Encode(str, K));
 
         this_thread::sleep_for(chrono::milliseconds(10));
     }
