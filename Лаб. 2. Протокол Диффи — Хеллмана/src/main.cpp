@@ -34,10 +34,10 @@ int main() {
         }
     } catch (std::exception& err) {
         cerr << err.what() << endl;
-        return -2;
+        return -1;
     } catch (...) {
         cerr << "Undefined error" << endl;
-        return -3;
+        return -2;
     }
 
     return 0;
