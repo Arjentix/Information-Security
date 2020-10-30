@@ -13,8 +13,9 @@
 #include <string>
 #include <stdexcept>
 
-#include "sock.h"
-#include "srp_6.h"
+#include "sock/socket.h"
+#include "srp_6/client.h"
+#include "srp_6/server.h"
 
 int main() {
     using namespace std;
@@ -28,9 +29,11 @@ int main() {
         }
 
         if (fork_res == 0) {  // Child
-            srp_6::RunClient(sockets.first);
+            srp_6::Client client(sockets.first);
+            client.Communicate();
         } else {  // Parent
-            srp_6::RunServer(sockets.second);
+            srp_6::Server server(sockets.second);
+            server.Communicate();
         }
     } catch (std::exception& err) {
         cerr << err.what() << endl;
