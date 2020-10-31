@@ -9,20 +9,10 @@
 import sys
 import sympy
 
-def get_primitive_root(prime_number):
-    for num in range(1, prime_number):
-        rests = []
-        success = True
-        for degree in range(1, prime_number):
-            rest = pow(num, degree) % prime_number
-            if rest not in rests:
-                rests.append(rest)
-            else:
-                success = False
-                break
-        if success:
-            return num
-    return -1
+def get_safe_prime(prime_number):
+    N = 2 * prime_number + 1
+    if sympy.isprime(N):
+        return N, sympy.primitive_root(N)
        
 
 
@@ -34,12 +24,13 @@ def main():
     print('{')
     first = True
     for i in range(1, int(sys.argv[1])):
-        if not first:
-            print(',')
         prime_number = sympy.prime(i)
-        primitive_root = get_primitive_root(prime_number)
-        print(f'    {{{prime_number}, {primitive_root}}}', end='')
-        first = False
+        N = 2 * prime_number + 1
+        if sympy.isprime(N):
+            if not first:
+                print(',')
+            print(f'    {{{N}, {sympy.primitive_root(N)}}}', end='')
+            first = False
     print('\n}')
 
 if __name__ == '__main__':
