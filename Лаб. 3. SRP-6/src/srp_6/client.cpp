@@ -15,6 +15,10 @@
 
 namespace {
 
+const std::string kClientColorCode = "\033[31m";
+const std::string kExtraTextColorCode = "\033[90m";
+const std::string kNormalColorCode = "\033[0m";
+
 std::random_device r;
 std::default_random_engine generator(r());
 
@@ -42,39 +46,107 @@ std::string RandomString() {
 namespace srp_6 {
 
 Client::Client(sock::Socket& socket, std::ostream& log_stream) :
-Communicant(socket, log_stream) {
-    std::tie(_N, _g) = GenerateNAndG();
-}
+Communicant(socket, log_stream) {}
 
 void Client::Communicate() {
     SetGreeting("🦊 You: ");
-    RegisterUser();
-    // LoginUser();
+
+    std::cout << "Using N = " << _N << ", g = " << _g
+              << ", k = " << _k << std::endl;
+
+    try {
+        RegisterUser();
+        LoginUser();
+    } catch (EndOfCommunicationException& ex) {
+        throw std::runtime_error("Connection was broken by Server");
+    }
 }
 
 void Client::RegisterUser() {
     using namespace std;
 
-    SendAndLog(to_string(_N));
-    SendAndLog(to_string(_g));
-
-    CheckConfirmation();
     string username;
-    cout << "📖 Registration\nEnter username: ";
+    cout << "\n📖 Registration\nEnter username: ";
     cin >> username;
-    SetGreeting("🦊 " + username + ": ");
+    SetGreeting("🦊 " + kClientColorCode + username + ": " + kNormalColorCode);
 
     string password;
     cout << "Enter password🔑 : ";
     cin >> password;
 
     const string salt = RandomString();
-    const int x = HashArgs(salt, password);
-    const int password_verifier = ModPow(_g, x, _N);
+    const BigInteger x = HashArgs(salt, password);
+    const BigInteger password_verifier = ModPow(_g, x, _N);
 
     SendAndLog(username);
     SendAndLog(salt);
-    SendAndLog(to_string(password_verifier));
+    SendAndLog(BigIntegerToString(password_verifier));
+}
+
+void Client::LoginUser() {
+    using namespace std;
+
+    // First round
+    CheckConfirmation();
+    string username;
+    cout << "\n🚪 Logging\nEnter username: ";
+    cin >> username;
+    SetGreeting("🦊 " + kClientColorCode + username + ": " + kNormalColorCode);
+
+    const uint32_t kMinRandomNumber = 1;
+    const uint32_t kMaxRandomNumber = std::numeric_limits<uint32_t>::max();
+    uniform_int_distribution<uint32_t> distribution(kMinRandomNumber,
+                                                    kMaxRandomNumber);
+    const BigInteger a = distribution(generator);
+    const BigInteger A = ModPow(_g, a, _N);
+    SendAndLog(username);
+    SendAndLog(BigIntegerToString(A));
+
+    const string salt = ReadAndConfirm();
+    const BigInteger B(Read());
+    if (B == 0) {
+        cout << GetGreeting() << "Wrong Server logging number!❌" << endl;
+        EndCommunication();
+        return;
+    }
+    Confirm();
+
+    const BigInteger scrambler = HashArgs(A, B);
+    if (scrambler == 0) {
+        cout << GetGreeting() << "Wrong scrambler!❌" << endl;
+        EndCommunication();
+        return;
+    }
+
+    string password;
+    cout << "Enter password🔑 : ";
+    cin >> password;
+
+    const BigInteger x = HashArgs(salt, password);
+    const BigInteger S = ModPow(B - _k * ModPow(_g, x, _N),
+                                BigInteger(a + scrambler*x),
+                                _N);
+    const BigInteger K = HashArgs(S);  // key
+    cout << GetGreeting() << kExtraTextColorCode << "[K = " << K << "]"
+         << kNormalColorCode << endl;
+    Confirm();
+
+    // Second round
+    const BigInteger M = HashArgs(HashArgs(_N) ^ HashArgs(_g),
+                                  HashArgs(username), salt, A, B, K);
+    CheckConfirmation();
+    SendAndLog(BigIntegerToString(M));
+
+    const BigInteger R = HashArgs(A, M, K);
+    Confirm();
+    const BigInteger server_R(Read());
+    if (R != server_R) {
+        EndCommunication();
+        return;
+    }
+    Confirm();
+
+    cout << "\nYou was successfully logged in!" << endl;
 }
 
 }  // namespace srp_6

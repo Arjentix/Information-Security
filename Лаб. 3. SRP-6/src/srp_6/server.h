@@ -9,6 +9,7 @@
 #pragma once
 
 #include <random>
+#include <string>
 
 #include "communicant.h"
 
@@ -21,6 +22,10 @@ class Server : public Communicant {
     void Communicate() override;
 
  private:
+    std::string _username;
+    std::string _salt;
+    BigInteger _password_verifier;
+
     void RegisterUser();
     void LoginUser();
 };

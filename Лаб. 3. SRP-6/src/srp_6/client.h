@@ -21,9 +21,6 @@ class Client : public Communicant {
     void Communicate() override;
 
  private:
-    int _N;
-    int _g;
-
     void RegisterUser();
     void LoginUser();
 };
