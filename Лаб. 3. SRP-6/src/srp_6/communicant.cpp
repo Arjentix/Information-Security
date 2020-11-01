@@ -15,7 +15,6 @@
 
 #include "ng.h"
 
-
 namespace {
     const std::string kConfirmationMessage = "OK";
     const std::string kEndMessage = "END";
@@ -71,7 +70,7 @@ std::string Communicant::Read() {
     if (str == kEndMessage) {
         throw EndOfCommunicationException("Communicant ended the connection");
     }
-    
+
     return str;
 }
 std::string Communicant::ReadAndConfirm() {

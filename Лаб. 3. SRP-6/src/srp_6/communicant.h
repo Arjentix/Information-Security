@@ -37,43 +37,98 @@ class Communicant {
     static const BigInteger _k;
     std::ostream& _log_stream;
 
+    /**
+     * @brief   Converts BigInteger i to string
+     * 
+     * @param   i   some BigInteger number
+     * 
+     * @return  string representation of i
+     */
     std::string BigIntegerToString(const BigInteger& i);
 
     /**
-     * @brief   Send message to the socket and logs it to the os with leading greeting
+     * @brief   Send message to the socket, log it with leading greeting and check confirmation from the other side
+     * 
+     * @details Calls CheckConfirmation() after sending message
      * 
      * @param   mes     message to be sended
      */
     void SendAndLog(std::string_view mes);
 
     /**
-     * @brief   Check if companion has send OK message otherwise throws a runtime_error 
+     * @brief   Check if companion has send OK message
+     * 
+     * @throw   EndOfCommunicationException if received END message
+     * @throw   std::runtime_error if received some other message
      * 
      * @param   socket  socket to read message
      */
     void CheckConfirmation();
 
+    /**
+     * @brief   Read message from socket
+     * 
+     * @return  read string
+     */
     std::string Read();
 
-    std::string ReadAndConfirm();
-
+    /**
+     * @brief   Send confirmation message
+     */
     void Confirm();
 
+    /**
+     * @brief   Read() and Confirm() together
+     * 
+     * @see     Read(), Confirm()
+     * 
+     * @return  read string
+     */
+    std::string ReadAndConfirm();
+
+    /**
+     * @brief   Send message to indicate the end of communication
+     */
     void EndCommunication();
 
+
+    /**
+     * @brief   Get greeting message
+     * 
+     * @return  string with greeting message
+     */
     std::string GetGreeting();
 
+    /**
+     * @brief   Set the Greeting message
+     * 
+     * @param   greeting    message with greeting
+     */
     void SetGreeting(std::string greeting);
 
-    inline static uint32_t HashArgs() {
-       return 0;
-    }
 
+    /**
+     * @brief   Form polynomial hash of all arguments
+     * 
+     * @details For all arguments should be defined std::hash<ArgType> structure
+     * 
+     * @tparam  Arg1    First argument type
+     * @tparam  Args    All other arguments types
+     * 
+     * @param   arg1    First argument
+     * @param   args    All other arguments
+     * 
+     * @return  polynomial hash of all arguments
+     */
     template <typename Arg1, typename... Args>
     static uint32_t HashArgs(const Arg1& arg1, const Args&... args) {
        const int p = 31;
 
        return p * std::hash<Arg1>()(arg1) + p * HashArgs(args...);
+    }
+
+    inline static uint32_t HashArgs() {
+       return 0;
     }
 
    /**

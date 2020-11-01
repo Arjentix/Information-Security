@@ -47,16 +47,18 @@ class Socket {
     }
 
  private:
-  /**
-   * @param   descriptor  socket descriptor
-   */
-  explicit Socket(int descriptor);
+    /**
+     * @brief   Construct a new Socket object
+     * 
+     * @param   descriptor  socket descriptor
+     */
+    explicit Socket(int descriptor);
 
-  friend std::pair<Socket, Socket> CreateSocketPair();
+    friend std::pair<Socket, Socket> CreateSocketPair();
 
-  int _descriptor;
-  bool _is_good;
-  bool _is_moved;
+    int _descriptor;
+    bool _is_good;
+    bool _is_moved;
 };
 
 /**

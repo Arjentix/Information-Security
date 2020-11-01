@@ -17,8 +17,17 @@ namespace srp_6 {
 
 class Server : public Communicant {
  public:
+    /**
+     * @brief   Construct a new Server object
+     * 
+     * @param   socket      socket to transfer and receive data
+     * @param   log_stream  stream to log information
+     */
     Server(sock::Socket& socket, std::ostream& log_stream = std::cout);
 
+    /**
+     * @brief   Run SRP-6 communication demonstration for Server side
+     */
     void Communicate() override;
 
  private:
@@ -26,7 +35,14 @@ class Server : public Communicant {
     std::string _salt;
     BigInteger _password_verifier;
 
+    /**
+     * @brief   Register user on the Server
+     */
     void RegisterUser();
+
+    /**
+     * @brief   Login user on the Server
+     */
     void LoginUser();
 };
 

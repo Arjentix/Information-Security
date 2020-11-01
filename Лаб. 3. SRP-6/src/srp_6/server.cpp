@@ -17,6 +17,9 @@
 
 namespace {
 
+/**
+ * @brief   Some codes for terminal to provide colors
+ */
 const std::string kServerColorCode = "\033[36m";
 const std::string kExtraTextColorCode = "\033[90m";
 const std::string kNormalColorCode = "\033[0m";

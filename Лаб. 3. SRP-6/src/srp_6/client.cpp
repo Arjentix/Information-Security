@@ -15,6 +15,9 @@
 
 namespace {
 
+/**
+ * @brief   Some codes for terminal to provide colors
+ */
 const std::string kClientColorCode = "\033[31m";
 const std::string kExtraTextColorCode = "\033[90m";
 const std::string kNormalColorCode = "\033[0m";
@@ -22,6 +25,11 @@ const std::string kNormalColorCode = "\033[0m";
 std::random_device r;
 std::default_random_engine generator(r());
 
+/**
+ * @brief   Generate random string of length in range [32, 128]
+ * 
+ * @return  random string
+ */
 std::string RandomString() {
     const int kMinLength = 32;
     const int kMaxLength = 128;
