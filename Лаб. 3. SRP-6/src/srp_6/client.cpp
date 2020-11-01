@@ -79,7 +79,7 @@ void Client::RegisterUser() {
     SetGreeting("🦊 " + kClientColorCode + username + ": " + kNormalColorCode);
 
     string password;
-    cout << "Enter password🔑 : ";
+    cout << "🔑 Enter password: ";
     cin >> password;
 
     const string salt = RandomString();
@@ -113,7 +113,7 @@ void Client::LoginUser() {
     const string salt = ReadAndConfirm();
     const BigInteger B(Read());
     if (B == 0) {
-        cout << GetGreeting() << "Wrong Server logging number!❌" << endl;
+        cout << GetGreeting() << "❌ Wrong Server logging number!" << endl;
         EndCommunication();
         return;
     }
@@ -121,13 +121,13 @@ void Client::LoginUser() {
 
     const BigInteger scrambler = HashArgs(A, B);
     if (scrambler == 0) {
-        cout << GetGreeting() << "Wrong scrambler!❌" << endl;
+        cout << GetGreeting() << "❌ Wrong scrambler!" << endl;
         EndCommunication();
         return;
     }
 
     string password;
-    cout << "Enter password🔑 : ";
+    cout << "🔑 Enter password: ";
     cin >> password;
 
     const BigInteger x = HashArgs(salt, password);
@@ -154,7 +154,7 @@ void Client::LoginUser() {
     }
     Confirm();
 
-    cout << "\nYou was successfully logged in!" << endl;
+    cout << "\n✅ You was successfully logged in!" << endl;
 }
 
 }  // namespace srp_6

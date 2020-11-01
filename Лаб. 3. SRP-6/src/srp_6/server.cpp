@@ -65,7 +65,7 @@ void Server::LoginUser() {
     // First round
     const string username = Read();
     if (username != _username) {
-        std::cout << GetGreeting() << "Wrong username!❌" << endl;
+        std::cout << GetGreeting() << "❌ Wrong username!" << endl;
         EndCommunication();
         return;
     }
@@ -73,7 +73,7 @@ void Server::LoginUser() {
 
     const BigInteger A(Read());
     if (A == 0) {
-        cout << GetGreeting() << "Wrong Client logging number!❌" << endl;
+        cout << GetGreeting() << "❌ Wrong Client logging number!" << endl;
         EndCommunication();
         return;
     }
@@ -90,7 +90,7 @@ void Server::LoginUser() {
 
     const BigInteger scrambler = HashArgs(A, B);
     if (scrambler == 0) {
-        cout << GetGreeting() << "Wrong scrambler!❌" << endl;
+        cout << GetGreeting() << "❌ Wrong scrambler!" << endl;
         EndCommunication();
         return;
     }
@@ -108,7 +108,7 @@ void Server::LoginUser() {
     Confirm();
     const BigInteger client_M(Read());
     if (M != client_M) {
-        cout << GetGreeting() << "Wrong password!❌" << endl;
+        cout << GetGreeting() << "❌ Wrong password!" << endl;
         EndCommunication();
         return;
     }
