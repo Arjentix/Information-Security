@@ -74,7 +74,7 @@ void Client::RegisterUser() {
     using namespace std;
 
     string username;
-    cout << "\n📖 Registration\nEnter username: ";
+    cout << "\n📖 Registration\n📛 Enter username: ";
     cin >> username;
     SetGreeting("🦊 " + kClientColorCode + username + ": " + kNormalColorCode);
 
@@ -97,7 +97,7 @@ void Client::LoginUser() {
     // First round
     CheckConfirmation();
     string username;
-    cout << "\n🚪 Logging\nEnter username: ";
+    cout << "\n🚪 Logging\n📛 Enter username: ";
     cin >> username;
     SetGreeting("🦊 " + kClientColorCode + username + ": " + kNormalColorCode);
 
