@@ -19,8 +19,17 @@
 
 namespace rsa {
 
+/**
+ * @brief   Base class for communicants in RSA-demonstation
+ */
 class Communicant {
  public:
+    /**
+     * @brief   Construct a new Communicant object
+     * 
+     * @param   socket      socket to read and write data
+     * @param   log_stream  stream to log information 
+     */
     Communicant(sock::Socket& socket, std::ostream& log_stream = std::cout);
 
     virtual void Communicate() = 0;
@@ -60,10 +69,31 @@ class Communicant {
      */
     void SetGreeting(std::string greeting);
 
-
+    /**
+     * @brief   Generate private and public keys
+     * 
+     * @return  pair of private and public keys
+     */
     std::pair<Key, Key> GenerateKeys();
 
+    /**
+     * @brief   Encrypts message with key
+     * 
+     * @param   mes message to encrypt
+     * @param   key key to encrypt with
+     * 
+     * @return  encrypted message
+     */
     std::string Encrypt(std::string_view mes, const Key& key);
+
+    /**
+     * @brief   Decrypts message with key
+     * 
+     * @param   mes message to decrypt
+     * @param   key key to decrypt with
+     * 
+     * @return  decrypted message
+     */
     std::string Decrypt(const std::string& mes, const Key& key);
 
  private:

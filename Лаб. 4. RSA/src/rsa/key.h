@@ -15,10 +15,25 @@
 
 namespace rsa {
 
+/**
+ * @brief   An RSA private or public key
+ */
 using Key = std::pair<BigInteger, BigInteger>;
 
+/**
+ * @brief   Constructs RSA key from string
+ * 
+ * @param   str string with key in format <BigInteger, BigInteger>
+ * @return  RSA key
+ */
 Key KeyFromString(const std::string& str);
 
+/**
+ * @brief   Converts RSA key to string
+ * 
+ * @param   key RSA key
+ * @return  string in format <BigInteger, BigInteger>
+ */
 std::string KeyToString(const Key& key);
 
 }  // namespace rsa

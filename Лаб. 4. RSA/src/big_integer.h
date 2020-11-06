@@ -10,4 +10,7 @@
 
 #include <boost/multiprecision/cpp_int.hpp>
 
+/**
+ * @brief   A synonym for boost cpp_int with no overflow
+ */
 using BigInteger = boost::multiprecision::cpp_int;

@@ -18,6 +18,13 @@ namespace {
 std::random_device device;
 std::default_random_engine generator(device());
 
+/**
+ * @brief   Get the GCD of two numbers using modulus algorithm
+ * 
+ * @param   a   first number
+ * @param   b   second number
+ * @return  the GCD of a and b
+ */
 BigInteger GetGcdByModulus(BigInteger a, BigInteger b) {
     while (a != 0 && b != 0) {
         if (a > b) {
@@ -30,6 +37,11 @@ BigInteger GetGcdByModulus(BigInteger a, BigInteger b) {
     return std::max(a, b);
 }
 
+/**
+ * @brief   Generate 256 bit random prime candidate
+ * 
+ * @return  prime candidate 
+ */
 BigInteger GeneratePrimeCandidate() {
     using boost::multiprecision::bit_set;
 

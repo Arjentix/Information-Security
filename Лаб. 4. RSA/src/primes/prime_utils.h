@@ -15,10 +15,30 @@
  */
 namespace primes {
 
+/**
+ * @brief   Generate random prime number. Uses Miller-Rabin algorithm
+ * 
+ * @return  random prime number
+ */
 BigInteger RandomPrime();
 
+/**
+ * @brief   Find random coprime for n
+ * 
+ * @param   n number to find comprime
+ * 
+ * @return  coprime number
+ */
 BigInteger FindRandomCoprime(const BigInteger& n);
 
+/**
+ * @brief   Find modular multiplicative inverse
+ * 
+ * @param   n       number to find modular inverse
+ * @param   modulus modulus to find modular inerse
+ * 
+ * @return  modular multiplicative inverse
+ */
 BigInteger FindModularMultiplicativeInverse(BigInteger n, BigInteger modulus);
 
 /**
